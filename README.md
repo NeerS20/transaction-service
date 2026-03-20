@@ -148,6 +148,18 @@ docker run -p 8080:8080 transaction-service
   "event_date": "2026-03-20T12:30:00"
 }
 ```
+## Operation Types
+
+Your application uses the following predefined operation types:
+
+| OperationType_ID | Description           | SignType |
+|-----------------|---------------------|----------|
+| 1               | Normal Purchase      | DEBIT    |
+| 2               | Installment Purchase | DEBIT    |
+| 3               | Withdrawal           | DEBIT    |
+| 4               | Credit Voucher       | CREDIT   |
+
+
 
 ---
 
