@@ -1,16 +1,18 @@
-# Transaction Service
+# Transaction-service
 
-A Spring Boot microservice for managing accounts and transactions with PostgreSQL and Flyway migrations.
+A simple Spring Boot service to manage **Accounts** and **Transactions** for a cardholder system. This service implements 3 endpoints: create account, get account, and create transaction.
 
 ---
 
 ## Features
 
-* Create and retrieve **Accounts** and **Transactions**
-* ACID-compliant transactions with **OperationType** tracking
-* Database migration via **Flyway**
-* Validation and error handling
-* Docker-ready for easy deployment
+* Create and retrieve **Accounts**
+* Create **Transactions** associated with accounts
+* Each transaction has an **OperationType** (normal purchase, withdrawal, credit voucher, purchase with installments)
+* Supports negative and positive transaction amounts based on type
+* Input validation and error handling
+* Docker-ready for easy execution
+* JUnit tests included for core functionality
 
 ---
 
@@ -49,7 +51,7 @@ A Spring Boot microservice for managing accounts and transactions with PostgreSQ
 
 ---
 
-## Setup
+## Setup Instructions
 
 1. **Clone the repository**
 
@@ -58,95 +60,95 @@ git clone <your-repo-url>
 cd transaction-service
 ```
 
-2. **Configure `application.properties`**
+2. **Configure database in `application.properties`**
 
 ```properties
-spring.datasource.url=<database_url>
+spring.datasource.url=<db_url>
 spring.datasource.username=<db_username>
 spring.datasource.password=<db_password>
 ```
 
-3. **Build and run locally**
+3. **Run migrations (Flyway)**
+   Flyway will automatically run migration scripts in `src/main/resources/db/migration`.
+
+4. **Build and run the service**
 
 ```bash
 ./gradlew bootRun
 ```
 
----
+5. **(Optional) Run with Docker**
 
-## Database
-
-Flyway handles migrations automatically. Place `.sql` scripts in:
-
-```text
-src/main/resources/db/migration
-```
-
-Example migration files:
-
-```text
-V1__create_account_table.sql
-V2__create_transaction_table.sql
+```bash
+docker build -t transaction-service .
+docker run -p 8080:8080 transaction-service
 ```
 
 ---
 
 ## API Endpoints
 
-### Accounts
+### 1. Create Account
 
-| Method | Endpoint           | Description          |
-| ------ | ------------------ | -------------------- |
-| POST   | /api/accounts      | Create a new account |
-| GET    | /api/accounts/{id} | Get account by ID    |
-
-**Example Requests**
-
-* **Create Account**
-
-```json
-POST /api/accounts
-Content-Type: application/json
-
-{
-"documentNumber": "1235"
-}
-```
-
-* **Get Account**
-
-```json
-GET /api/accounts/1
-```
-
-Response:
+**POST** `/accounts`
+**Request Body:**
 
 ```json
 {
-  "accountId": 1,
-  "documentNumber": "1235"
+  "document_number": "12345678900"
 }
 ```
 
-### Transactions
-
-| Method | Endpoint               | Description              |
-| ------ | ---------------------- | ------------------------ |
-| POST   | /api/transactions      | Create a new transaction |
-
-**Example Requests**
-
-* **Create Transaction**
+**Response Example:**
 
 ```json
-POST /api/transactions
-Content-Type: application/json
 {
-"accountId": 1,
-"operationTypeId": 4,
-"amount": 120.45
+  "account_id": 1,
+  "document_number": "12345678900"
 }
 ```
+
+---
+
+### 2. Get Account
+
+**GET** `/accounts/{accountId}`
+**Response Example:**
+
+```json
+{
+  "account_id": 1,
+  "document_number": "12345678900"
+}
+```
+
+---
+
+### 3. Create Transaction
+
+**POST** `/transactions`
+**Request Body:**
+
+```json
+{
+  "account_id": 1,
+  "operation_type_id": 4,
+  "amount": 123.45
+}
+```
+
+**Response Example:**
+
+```json
+{
+  "transaction_id": 1,
+  "account_id": 1,
+  "operation_type_id": 4,
+  "amount": 123.45,
+  "event_date": "2026-03-20T12:30:00"
+}
+```
+
 ---
 
 ## Testing
@@ -159,17 +161,10 @@ Run tests with:
 
 ---
 
-## Deployment
+## Notes
 
-* **Build JAR**
+* Transactions of type **purchase** or **withdrawal** are stored as negative amounts.
+* Transactions of type **credit voucher** are stored as positive amounts.
+* Only **create** and **get** endpoints are implemented for this step.
 
-```bash
-./gradlew bootJar
-```
-
-* **Run with Docker**
-
-```bash
-docker build -t transaction-service .
-docker run -p 8080:8080 transaction-service
-```
+---
