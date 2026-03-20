@@ -61,14 +61,9 @@ cd transaction-service
 2. **Configure `application.properties`**
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/transaction_db
-spring.datasource.username=postgres
-spring.datasource.password=password
-spring.jpa.hibernate.ddl-auto=none
-spring.jpa.show-sql=true
-
-spring.flyway.enabled=true
-spring.flyway.locations=classpath:db/migration
+spring.datasource.url=<database_url>
+spring.datasource.username=<db_username>
+spring.datasource.password=<db_password>
 ```
 
 3. **Build and run locally**
@@ -138,7 +133,6 @@ Response:
 | Method | Endpoint               | Description              |
 | ------ | ---------------------- | ------------------------ |
 | POST   | /api/transactions      | Create a new transaction |
-| GET    | /api/transactions/{id} | Get transaction by ID    |
 
 **Example Requests**
 
