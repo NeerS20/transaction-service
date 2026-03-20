@@ -14,9 +14,15 @@ public class GlobalExceptionHandler
         return ResponseEntity.status(404).body(ex.getMessage());
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handle(BadRequestException ex)
+    {
+        return ResponseEntity.status(400).body(ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handle(Exception ex)
     {
-        return ResponseEntity.status(500).body("Internal error");
+        return ResponseEntity.status(500).body(ex.getMessage());
     }
 }

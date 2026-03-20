@@ -8,7 +8,6 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TransactionRequest
 {
-
     private Long accountId;
     private Integer operationTypeId;
     private Double amount;

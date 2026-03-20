@@ -3,6 +3,8 @@ package com.transaction.service.account.controller;
 
 import com.transaction.service.account.dto.AccountRequest;
 import com.transaction.service.account.service.AccountService;
+import com.transaction.service.common.exception.BadRequestException;
+import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -21,6 +23,10 @@ public class AccountController
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody AccountRequest accountRequest)
     {
+        if(StringUtils.isBlank(accountRequest.getDocumentNumber()))
+        {
+            throw new BadRequestException("DocumentNumber can't be empty or Null");
+        }
         return ResponseEntity.status(HttpStatus.CREATED.value())
                 .body(accountService.createAccount(accountRequest));
     }
